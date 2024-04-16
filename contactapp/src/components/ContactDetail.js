@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { getContact, } from '../api/ContactService';
 import { toastError, toastSuccess } from '../api/ToastService';
 
-const ContactDetail = ({ updateContact, updateImage }) => {
+const ContactDetail = ({ updateContact, updateImage, updateContactInList }) => {
 
     const inputRef = useRef();
     const [contact, setContact] = useState({
@@ -71,6 +71,8 @@ const ContactDetail = ({ updateContact, updateImage }) => {
         event.preventDefault();
         await updateContact(contact);
         fetchContact(id);
+        // After updating the contact, call the function passed from App to update the contact in the list
+        updateContactInList(contact);
         toastSuccess('Contact Updated');
     };
 

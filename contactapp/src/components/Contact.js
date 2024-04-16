@@ -4,19 +4,7 @@ import { deleteContact } from '../api/ContactService';
 import { toastError, toastSuccess } from '../api/ToastService';
 import Swal from 'sweetalert2';
 
-function Contact({ contact }) {
-
-    // const handleDelete = async (contactId) => {
-    //     try {
-    //         await deleteContact(contactId);
-    //         toastSuccess('Contact Deleted');
-    //         // Refresh contact list or update UI accordingly
-    //     } catch (error) {
-    //         console.error('Error deleting contact:', error);
-    //         toastError(error.message);
-    //         // Handle error (e.g., show error message)
-    //     }
-    // }
+function Contact({ contact, onDelete, deleteContactFromList }) {
 
     const handleDelete = (contactId) => {
         Swal.fire({
@@ -42,7 +30,7 @@ function Contact({ contact }) {
     };
     return (
         <>
-            <Link to={`/contacts/${contact.id}`} className="contact__item">
+            <div className="contact__item">
                 <div className="contact__header">
                     <div className="contact__image">
                         <img src={contact.photoUrl} alt={contact.name} />
@@ -58,9 +46,11 @@ function Contact({ contact }) {
                     <p><i className="bi bi-telephone"></i> {contact.phone}</p>
                     <p>{contact.status === 'Active' ? <i className='bi bi-check-circle'></i> :
                         <i className='bi bi-x-circle'></i>} {contact.status}</p>
+                    <u><Link to={`/contacts/${contact.id}`} className="contact__item">details</Link></u>
+                    <button onClick={() => handleDelete(contact.id)} className="red-button"><u>Delete</u></button>
                 </div>
-            </Link>
-            <button onClick={() => handleDelete(contact.id)}>Delete</button>
+            </div>
+
         </>
 
     )

@@ -3,12 +3,16 @@ import Contact from './Contact'
 
 
 function ContactList({ data, currentPage, getAllContacts }) {
+
+    const onDelete = (second) => { 
+        
+     }
     return (
         <main className='main'>
             {data?.content?.length === 0 && <div>No Contacts. Please add a new contact</div>}
 
             <ul className='contact__list'>
-                {data?.content?.length > 0 && data.content.map(contact => <Contact contact={contact} key={contact.id} />)}
+                {data?.content?.length > 0 && data.content.map(contact => <Contact contact={contact} onDelete={onDelete} key={contact.id} />)}
             </ul>
 
             {data?.content?.length > 0 && data?.totalPages > 1 &&

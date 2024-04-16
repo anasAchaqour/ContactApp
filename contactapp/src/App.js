@@ -104,6 +104,21 @@ function App() {
   };
 
 
+  // Define the function to update a contact in the list
+  const updateContactInList = (updatedContact) => {
+    // Find the contact in the list and update its details
+    const updatedData = data.content.map(contact => {
+      if (contact.id === updatedContact.id) {
+        return updatedContact; // Update the contact with the new details
+      }
+      return contact;
+    });
+
+    // Set the new data state
+    setData({ ...data, content: updatedData });
+  };
+  
+
   return (
     <>
       <Header toggleModal={toggleModal} nbOfContacts={data.totalElements} />
@@ -112,7 +127,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Navigate to={'/contacts'} />} />
             <Route path="/contacts" element={<ContactList data={data} currentPage={currentPage} getAllContacts={getAllContacts} />} />
-            <Route path="/contacts/:id" element={<ContactDetail updateContact={updateContact} updateImage={updateImage} />} />
+            <Route path="/contacts/:id" element={<ContactDetail updateContact={updateContact} updateImage={updateImage} updateContactInList={updateContactInList} />} />
           </Routes>
         </div>
       </main>

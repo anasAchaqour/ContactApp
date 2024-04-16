@@ -36,3 +36,8 @@
     transform: rotate(360deg);
   }
 }
+
+.red-button {
+  
+ color: rgb(197, 0, 0);
+}
