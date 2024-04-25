@@ -1,0 +1,462 @@
+
+ContactService methods:
+
+
+
+public Page<Contact> getAllContacts(int page, int size) {
+        return contactRepo.findAll(PageRequest.of(page, size, Sort.by("name")));
+    }
+
+
+1. **Method Signature:**
+   - `public Page<Contact> getAllContacts(int page, int size) { ... }`
+   - This line defines the method named `getAllContacts`.
+   - It specifies that the method returns a `Page` of `Contact` objects, which means it retrieves a subset of contacts from the database, organized in pages.
+   - The method accepts two parameters: `page` and `size`.
+     - `page`: Represents the page number of the results to retrieve.
+     - `size`: Represents the number of items (contacts) per page.
+
+2. **Return Type:**
+   - `Page<Contact>`: Indicates that the method returns a `Page` object containing `Contact` objects.
+   - A `Page` in Spring Data represents a sublist of data from a larger dataset, typically used for pagination.
+
+3. **Method Parameters:**
+   - `int page`: Represents the page number of the results to retrieve.
+     - For example, if `page = 0`, it retrieves the first page of results; if `page = 1`, it retrieves the second page, and so on.
+   - `int size`: Represents the number of items (contacts) per page.
+     - This parameter determines how many contacts are displayed on each page.
+
+In summary, the `getAllContacts` method retrieves a subset of contacts from the database, organized in pages. It takes two parameters: the page number and the size of each page. The method returns a `Page` object containing the contacts for the requested page, along with pagination information. This allows for efficient retrieval and display of contacts in a pageable format, particularly useful when dealing with large datasets.
+
+
+
+
+2. `return contactRepo.findAll(PageRequest.of(page, size, Sort.by("name")));`:
+   - This line retrieves contacts from the database using the `contactRepo` repository.
+   - `contactRepo.findAll(...)` queries all contacts from the database.
+   - `PageRequest.of(page, size, Sort.by("name"))` constructs a `PageRequest` object for pagination and sorting:
+     - `page`: Represents the page number to retrieve.
+     - `size`: Represents the number of items per page.
+     - `Sort.by("name")`: Specifies sorting by the `name` property in ascending order.
+   - The `findAll()` method returns a `Page` object containing the contacts for the requested page, sorted by name.
+
+3. `public Page<Contact>`: 
+   - Indicates that the method returns a `Page` of `Contact` objects. A `Page` represents a sublist of items from a larger list, with pagination information.
+
+
+
+
+
+
+///////////////////////////////
+
+
+
+image handling
+
+
+This method is responsible for uploading a photo for a contact with a specified ID. Let's break down the code:
+
+```java
+public String uploadPhoto(String id, MultipartFile file) {
+    log.info("Saving picture for user ID: {}", id);
+    Contact contact = getContact(id);
+    //String photoUrl = photoFunction.apply(id, file);
+    String photoUrl = null;
+    contact.setPhotoUrl(photoUrl);
+    contactRepo.save(contact);
+    return photoUrl;
+}
+```
+
+1. **`log.info("Saving picture for user ID: {}", id);`**:
+   - This line logs an informational message using the logger (`log`). It indicates that a picture is being saved for the user with the specified ID.
+   - The curly braces `{}` are placeholders for variables. In this case, `{}` is replaced with the `id` parameter.
+
+2. **`Contact contact = getContact(id);`**:
+   - This line calls the `getContact` method to retrieve the `Contact` object corresponding to the specified `id`.
+   - Presumably, `getContact` is a method elsewhere in the class or in a related service/component that retrieves a contact by its ID from the database.
+
+3. **`String photoUrl = null;`**:
+   - This line initializes the `photoUrl` variable to `null`. 
+   - The `photoUrl` variable will later be assigned the URL of the uploaded photo. However, in this code snippet, it's not being assigned any value initially.
+
+4. **`contact.setPhotoUrl(photoUrl);`**:
+   - This line sets the `photoUrl` for the retrieved `contact`. 
+   - As `photoUrl` is currently `null`, it indicates that no photo is associated with the contact at the moment.
+
+5. **`contactRepo.save(contact);`**:
+   - This line saves the modified `contact` object (with the updated `photoUrl`) back to the database using the `contactRepo`.
+
+6. **`return photoUrl;`**:
+   - This line returns the `photoUrl`, which is currently `null`.
+   - Presumably, in a complete implementation, this method would actually upload the photo, obtain the URL of the uploaded photo, and then set the `photoUrl` accordingly before saving the `contact`.
+
+In summary, this method logs a message indicating the saving of a picture for a user, retrieves the contact corresponding to the specified ID, sets the photo URL for the contact (which is currently null), saves the contact back to the database, and then returns the null `photoUrl`. This code snippet seems to be a placeholder and does not actually upload the photo.
+
+
+
+
+
+
+::::::::::::
+
+
+
+
+
+```java
+private final Function<String, String> fileExtension = filename ->
+        Optional.of(filename)
+                .filter(name -> name.contains("."))
+                .map(name -> "." + name.substring(filename.lastIndexOf(".") + 1))
+                .orElse(".png");
+```
+
+This line of code initializes a `Function` named `fileExtension` that takes a `String` as input (filename) and returns a `String` representing the file extension.
+
+1. **`private final Function<String, String> fileExtension = ...;`**:
+   - This line declares a `Function` named `fileExtension`.
+   - It takes a `String` (filename) as input and returns a `String` representing the file extension.
+   - The `Function` interface represents a single function that accepts one argument and produces a result.
+
+2. **`filename -> ...`**:
+   - This is a lambda expression defining the behavior of the `Function`.
+   - It takes a `String` parameter named `filename`.
+   - The arrow (`->`) separates the parameter from the lambda body.
+
+3. **`Optional.of(filename)`**:
+   - This creates an `Optional` object containing the `filename`.
+   - The `Optional` class is a container object that may or may not contain a non-null value.
+
+4. **`.filter(name -> name.contains("."))`**:
+   - This filters the `Optional` to check if the `filename` contains a dot (`.`), indicating the presence of an extension.
+   - The `filter` method takes a predicate (a boolean-valued function) as an argument.
+
+5. **`.map(name -> "." + name.substring(filename.lastIndexOf(".") + 1))`**:
+   - If the filename contains a dot, this maps the `Optional` by extracting the file extension.
+   - It uses the `substring` method to extract the substring after the last dot, which represents the file extension.
+   - It concatenates a dot (`.`) with the extracted extension.
+
+6. **`.orElse(".png")`**:
+   - If the filename does not contain a dot or if the mapping fails (e.g., if the filename is `null`), this provides a default value of `.png` as the file extension.
+   - The `orElse` method returns the value contained in the `Optional` if present, otherwise returns the specified default value.
+
+In summary, this line of code defines a `Function` that extracts the file extension from a filename. It returns the extracted extension if the filename contains a dot, otherwise it returns `.png` as the default extension. This function is useful for determining the file extension when handling filenames.
+
+
+
+
+
+::::::::::::
+
+
+
+
+
+private final BiFunction<String, MultipartFile, String> photoFunction = (id, image) -> {
+    String filename = id + fileExtension.apply(image.getOriginalFilename());
+    try {
+        Path fileStorageLocation = Paths.get(PHOTO_DIRECTORY).toAbsolutePath().normalize();
+        if(!Files.exists(fileStorageLocation)) {
+            Files.createDirectories(fileStorageLocation);
+        }
+        Files.copy(image.getInputStream(), fileStorageLocation.resolve(filename), REPLACE_EXISTING);
+        return ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/contacts/image/" + filename).toUriString();
+    } catch (Exception exception) {
+        throw new RuntimeException("Unable to save image");
+    }
+};
+
+This code defines a BiFunction named photoFunction that takes a String (id) and a MultipartFile (image) as input and returns a String (photoUrl) representing the URL where the uploaded photo can be accessed.
+A BiFunction is a functional interface in Java that represents a function that takes two arguments (hence the "Bi" prefix) and produces a result. It's part of the java.util.function package introduced in Java 8 as part of the Java Functional Programming paradigm.
+
+1. **Get File Storage Location:**
+   ```java
+   Path fileStorageLocation = Paths.get(PHOTO_DIRECTORY).toAbsolutePath().normalize();
+   ```
+   - `Paths.get(PHOTO_DIRECTORY)` creates a `Path` object representing the directory specified by `PHOTO_DIRECTORY`.
+   - `toAbsolutePath()` converts the path to an absolute path to ensure consistent handling across different environments.
+   - `normalize()` normalizes the path to remove any redundant elements like "." or "..".
+
+2. **Check if Directory Exists:**
+   ```java
+   if (!Files.exists(fileStorageLocation)) {
+       Files.createDirectories(fileStorageLocation);
+   }
+   ```
+   - `Files.exists(fileStorageLocation)` checks if the directory specified by `fileStorageLocation` exists.
+   - If the directory does not exist (`!Files.exists(...)`), `Files.createDirectories(fileStorageLocation)` creates the directory along with any necessary parent directories.
+
+3. **Copy Image to File Storage Location:**
+   ```java
+   Files.copy(image.getInputStream(), fileStorageLocation.resolve(filename), REPLACE_EXISTING);
+   ```
+   - `image.getInputStream()` obtains an `InputStream` representing the contents of the uploaded image.
+   - `fileStorageLocation.resolve(filename)` resolves the filename within the file storage location directory.
+   - `Files.copy()` copies the contents of the input stream (image) to the specified file.
+   - `REPLACE_EXISTING` specifies that if the target file already exists, it should be replaced.
+
+4. **Return URL of Saved Image:**
+   ```java
+   return ServletUriComponentsBuilder
+           .fromCurrentContextPath()
+           .path("/contacts/image/" + filename)
+           .toUriString();
+   ```
+   - `ServletUriComponentsBuilder.fromCurrentContextPath()` constructs a builder initialized with the current servlet context path.
+   - `.path("/contacts/image/" + filename)` appends the filename to the base URL for accessing the saved image.
+   - `.toUriString()` converts the constructed URL to a string representation.
+
+5. **Exception Handling:**
+   ```java
+   } catch (Exception exception) {
+       throw new RuntimeException("Unable to save image");
+   }
+   ```
+   - If any exception occurs during the file operations (e.g., file not found, I/O error), a `RuntimeException` is thrown with the message "Unable to save image". This ensures that the caller is aware of the failure to save the image and can handle it accordingly.
+
+In summary, this code snippet tries to save an uploaded image to a specified directory. It first checks if the directory exists and creates it if necessary. Then it copies the image to the directory and returns the URL of the saved image. If any exceptions occur during this process, it throws a `RuntimeException` with an appropriate error message.
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+Constant Class:
+
+
+
+
+
+
+
+public class Constant {
+
+    public static final String PHOTO_DIRECTORY = System.getProperty("user.home") + "/Downloads/uploads/";
+    public static final String X_REQUESTED_WITH = "X-Requested-With";
+}
+
+This `Constant` class contains two public static final variables:
+
+1. `PHOTO_DIRECTORY`:
+   - This variable represents the directory where photos will be stored.
+   - It's initialized using `System.getProperty("user.home")` to get the user's home directory and appending "/Downloads/uploads/" to specify the subdirectory where uploads will be stored.
+
+2. `X_REQUESTED_WITH`:
+   - This variable represents the name of the HTTP header indicating an XMLHttpRequest.
+   - It's initialized with the value "X-Requested-With".
+
+Both variables are declared as public, static, and final, indicating that they are constants and can be accessed without creating an instance of the class. They are commonly used across the application to provide consistent values for configuration or communication purposes.
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+resource  (controller):
+
+
+create:
+
+@PostMapping
+    public ResponseEntity<Contact> createContact(@RequestBody Contact contact) {
+        //return ResponseEntity.ok().body(contactService.createContact(contact));
+        return ResponseEntity.created(URI.create("/contacts/userID")).body(contactService.createContact(contact));
+    }
+
+private final ContactService contactService;:
+This line declares a private final field named contactService of type ContactService.
+The ContactService class likely provides methods for interacting with contacts, such as creating, retrieving, updating, or deleting contacts.
+
+
+@PostMapping:
+This annotation indicates that the createContact method handles HTTP POST requests.
+In the context of a RESTful API, this typically means that it's used for creating a new resource, in this case, a new contact.
+
+ResponseEntity is a class provided by the Spring Framework that represents the entire HTTP response, including the status code, headers, and body. It allows you to customize the HTTP response returned by your controller methods in Spring MVC or Spring WebFlux applications.
+
+ResponseEntity<Contact> is a generic type in Spring Framework that represents the entire HTTP response. Let's break it down:
+ResponseEntity: It's a class provided by Spring Framework that represents an HTTP response. It allows you to control the HTTP response status code, headers, and body.
+<Contact>: The angle brackets <Contact> denote that this ResponseEntity will contain an object of type Contact. In other words, it specifies the type of the response body.
+So, ResponseEntity<Contact> signifies an HTTP response that will contain a Contact object as its body.
+
+
+ResponseEntity.created(URI.create("/contacts/userID")).body(contactService.createContact(contact)); deals with creating a new contact and returning a well-formatted HTTP response that indicates success.
+ResponseEntity.created(...): This part is creating a specific type of HTTP response object called ResponseEntity. The created method of ResponseEntity is used to indicate that a new resource has been created successfully.
+
+ResponseEntity.created(...): This part is creating a specific type of HTTP response object called ResponseEntity. The created method of ResponseEntity is used to indicate that a new resource has been created successfully.
+
+URI.create("/contacts/userID"): This section constructs a URI (Uniform Resource Identifier) which essentially represents the location of the newly created contact. Here, "/contacts/" acts as a base path, and "userID" is likely a placeholder that will be replaced with the actual ID generated for the new contact.
+
+.body(...): This method sets the body of the HTTP response. The body will contain the actual data related to the created contact.
+
+contactService.createContact(contact): This part assumes a contactService exists and has a createContact method. This method is likely responsible for creating a new contact instance using the provided contact information (which is most likely an object containing details about the new contact). The createContact method presumably returns the newly created contact information.
+
+
+
+
+
+
+
+::::::::::::
+
+
+
+get all :
+
+@GetMapping
+    public ResponseEntity<Page<Contact>> getContacts(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                     @RequestParam(value = "size", defaultValue = "10") int size) {
+        return ResponseEntity.ok().body(contactService.getAllContacts(page, size));
+    }
+
+
+public ResponseEntity<Page<Contact>> getContacts(@RequestParam(value = "page", defaultValue = "0") int page,:
+
+This method is public and returns a ResponseEntity containing a Page of Contact objects.
+It accepts two query parameters: page and size, which specify the page number and the number of items per page, respectively.
+@RequestParam(value = "page", defaultValue = "0") int page: This annotation indicates that the page parameter is expected as a query parameter in the GET request. If not provided, it defaults to 0.
+@RequestParam(value = "size", defaultValue = "10") int size: Similarly, this annotation indicates that the size parameter is expected as a query parameter. If not provided, it defaults to 10.
+
+
+return ResponseEntity.ok().body(contactService.getAllContacts(page, size));:
+
+ResponseEntity.ok() is a static method that creates a ResponseEntity with an HTTP status of 200 (OK). This indicates that the request has succeeded.
+
+.body(contactService.getAllContacts(page, size)):
+
+The .body() method sets the body of the ResponseEntity to the result of contactService.getAllContacts(page, size).
+contactService.getAllContacts(page, size) is a method call to the contactService, likely fetching a paginated list of contacts based on the provided page and size.
+
+
+
+::::::::::::
+
+
+
+@GetMapping(path = "/image/{filename}", produces = { IMAGE_PNG_VALUE, IMAGE_JPEG_VALUE })
+    public byte[] getPhoto(@PathVariable("filename") String filename) throws IOException {
+        return Files.readAllBytes(Paths.get(PHOTO_DIRECTORY + filename));
+    }
+
+
+
+@GetMapping(path = "/image/{filename}", produces = { IMAGE_PNG_VALUE, IMAGE_JPEG_VALUE }):
+This annotation maps HTTP GET requests onto the specified endpoint /image/{filename}.
+It specifies that the endpoint produces image data in either PNG or JPEG format.
+
+The method getPhoto is defined to return a byte array (byte[]). This method is responsible for reading the bytes of an image file located at a specific directory (PHOTO_DIRECTORY) with the given filename. Then, it returns these bytes as the response.
+
+This method retrieves the photo/image data based on the provided filename.
+It accepts a path variable filename, which represents the name of the image file to retrieve.
+Inside the method, it reads the bytes of the image file located at the specified path (PHOTO_DIRECTORY + filename) using Files.readAllBytes().
+It returns the byte array representing the image data.
+
+
+
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ResponseEntity ::::::::::::::::::::::::::::::::::::::::::::
+
+ResponseEntity is a class provided by the Spring Framework that represents the entire HTTP response, including the status code, headers, and body. It allows you to customize the HTTP response returned by your controller methods in Spring MVC or Spring WebFlux applications.
+
+Here are some key points about ResponseEntity:
+
+HTTP Response Representation: ResponseEntity represents the entire HTTP response, including the status code, headers, and body. It encapsulates all the information that can be sent back to the client in response to an HTTP request.
+
+Customization: With ResponseEntity, you can customize various aspects of the HTTP response, such as the status code, headers, and body content.
+
+Generic Type: ResponseEntity is a generic class. This means you can specify the type of the response body. For example, ResponseEntity<String> represents an HTTP response with a body of type String.
+
+Convenience Methods: ResponseEntity provides convenient methods for creating response entities with different HTTP status codes and body content. For example, ResponseEntity.ok() creates a response entity with a status code of 200 (OK).
+
+Flexibility: ResponseEntity gives you flexibility in handling different scenarios. You can return different HTTP status codes, set custom headers, and return different types of response bodies based on the requirements of your application.
+
+In your example, ResponseEntity<List<String>> indicates that the controller method returns an HTTP response with a body containing a list of strings. The ResponseEntity.ok() method is used to create a response entity with a status code of 200 (OK) and the specified body content.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
